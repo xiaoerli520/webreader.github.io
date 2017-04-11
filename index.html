@@ -16,12 +16,12 @@
 				text-align: left;
 				width:100%;
 				overflow: hidden;
-				background: #e9dfc7;
+				background: #e9dfc7;/*背景的颜色，*/
 
 			}
 			.m-read-content{
 				font-size:14px;
-				color: #555;
+				color: #555;/*字体的颜色*/
 				line-height:31px;
 				padding:15px;
 
@@ -170,7 +170,7 @@
 				left: -2px;
 			}
 			#bk-blue{
-				background: cornflowerblue;
+				background:#B3B3B3;
 			}
 			#bk-fadeyellow{
 				background: #e9dfc7;
@@ -178,36 +178,31 @@
 			#bk-gray{
 				background: gray;
 			}
+			.artical-action-mid{
+				position: fixed;
+				z-index: 10002;
+				width: 100%;
+				height: 40%;
+				top:30%;
+			}
+			#font-shift{
+				font-size: 16px;
 
+			}
 		</style>
 	</head>
 	<body>
 		<div id="root" class="container">
-			<div id="top-nav" class="top-nav">
+			<div class="m-artical-action">
+				<div class="artical-action-mid" id="action_mid"></div>
+			</div>
+			<div id="top-nav" class="top-nav" style="display:none;">
 				<div class="icon-back"></div>
 				<div class="nav-title">返回书架</div>
 			</div>
 			<div id="fiction_chapter_title"></div>
 			<div id="fiction_container" class="m-read-content">
-				<h4>Lorem</h4>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab commodi distinctio esse hic illo labore nisi provident quam tempora tempore. Amet aut debitis dicta ea, numquam optio ratione ut? Accusamus?
-				</p>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab commodi distinctio esse hic illo labore nisi provident quam tempora tempore. Amet aut debitis dicta ea, numquam optio ratione ut? Accusamus?
-				</p>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab commodi distinctio esse hic illo labore nisi provident quam tempora tempore. Amet aut debitis dicta ea, numquam optio ratione ut? Accusamus?
-				</p>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab commodi distinctio esse hic illo labore nisi provident quam tempora tempore. Amet aut debitis dicta ea, numquam optio ratione ut? Accusamus?
-				</p>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab commodi distinctio esse hic illo labore nisi provident quam tempora tempore. Amet aut debitis dicta ea, numquam optio ratione ut? Accusamus?
-				</p>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab commodi distinctio esse hic illo labore nisi provident quam tempora tempore. Amet aut debitis dicta ea, numquam optio ratione ut? Accusamus?
-				</p>
+
 			</div>
 			<div class="m-button-bar">
 				<ul class="u-tab">
@@ -216,24 +211,9 @@
 					<br/>
 				</ul>
 			</div>
-			<div class="nav-pannel-bk">
-
+			<div class="nav-pannel-bk font-container" style="display: none">
 			</div>
-			<div id="bottom-nav" class="bottom-nav">
-				<div class="bottom-button">
-					<div class="icon-index"></div>
-					<div class="nav-title-three">目录</div>
-				</div>
-				<div class="bottom-button">
-					<div class="icon-font"></div>
-					<div class="nav-title-three">字体</div>
-				</div>
-				<div class="bottom-button">
-					<div class="icon-night"></div>
-					<div class="nav-title-three">夜间</div>
-				</div>
-			</div>
-			<div class="nav-pannel" id="font-container">
+			<div class="nav-pannel font-container" id="font-container" style="display: none">
 				<div class="child-mod">
 					<span>字号</span>
 					<button id="large-font" class="font-size-button">大</button>
@@ -241,23 +221,39 @@
 				</div>
 				<div class="child-mod">
 					<span>背景</span>
-					<div class="bk-container">
+					<div class="bk-container" style="display: none">
 						<div class="bk-container-current"></div>
 					</div>
 					<div class="bk-container" id="bk-white">
-
+						<div class="bk-container-current"></div>
 					</div>
 					<div class="bk-container" id="bk-gray">
-
+						<div class="bk-container-current"></div>
 					</div>
 					<div class="bk-container" id="bk-fadeyellow">
-
+						<div class="bk-container-current"></div>
 					</div>
 					<div class="bk-container" id="bk-blue">
-
+						<div class="bk-container-current"></div>
 					</div>
 				</div>
 			</div>
+			<div class="bottom-nav-bk bottom_nav" style="display:none"></div>
+			<div id="bottom-nav bottom_nav" class="bottom-nav" style="display:none">
+				<div class="bottom-button">
+					<div class="icon-index"></div>
+					<div class="nav-title-three">目录</div>
+				</div>
+				<div class="bottom-button" id="font-shift">
+					<div class="icon-font"></div>
+					<div class="nav-title-three">字体</div>
+				</div>
+				<div class="bottom-button" id="night-shift">
+					<div class="icon-night"></div>
+					<div class="nav-title-three">夜间模式</div>
+				</div>
+			</div>
+
 		</div>
 		<script src="lib/zepto.min.js"></script>
 		<script>
@@ -265,9 +261,237 @@
 		</script>
 		<script src="js/jquery.base64.js"></script>
 		<script src="js/jquery.jsonp.js"></script>
-
 		<script>
-			
+			(function(){
+				var Util = (function(){
+					var prefix = 'html5_reader_';
+					var StorageGetter = function(key){
+						return localStorage.getItem(prefix+key);
+					}
+					var StorageSetter = function(key,val){
+						return localStorage.setItem(prefix+key,val);
+					}
+					var getBSONP = function (url,callback) {
+						return $.jsonp({
+							url : url,
+							cache : true,
+							callback : 'duokan_fiction_chapter',
+							success : function (result) {
+								var data = $.base64.decode(result);
+								var json = decodeURIComponent(escape(data));
+								callback(json);
+							}
+						})
+					}
+					//封装localstorage
+					return {
+						getBSONP : getBSONP,
+						StorageGetter:StorageGetter,
+						StorageSetter:StorageSetter
+					}
+				})();
+				var Dom = {
+					top_nav : $('#top-nav'),
+					bottom_nav : $('.bottom-nav'),
+
+
+				}
+				var Win = $(window);
+				var Doc = $(document);
+				var RootContainer = $('#fiction_container');
+				var initFontSize = Util.StorageGetter('font_size');
+				var readerModel;
+				var readerUI;
+				initFontSize = parseInt(initFontSize);
+				if(!initFontSize){
+					initFontSize = 14;
+				}
+				RootContainer.css('font-size',initFontSize);
+
+				var initBk = Util.StorageGetter('initBk');
+				if(!initBk){
+					initBk = '#e9dfc7';
+				}
+				$('body').css('background',initBk);
+				var initFontcolor = Util.StorageGetter('initFontcolor');
+				if(!initFontcolor){
+					initFontcolor = '#555';
+				}
+				$('.m-read-content').css('color',initFontcolor);
+				function main(){
+					//整个项目的入口函数
+					readerModel = ReaderModel();
+					readerUI = ReaderBaseFrame(RootContainer);
+					readerModel.init(function (data) {
+						readerUI(data);
+					});
+
+					EventHandler();
+				}
+				function ReaderModel(){
+					//实现和阅读器相关的数据交换方法
+					var Chapter_id;
+					var ChapterTotal;
+					var init = function (UIcallback) {
+						getFictionInfo(function () {
+							getCurChapterContent(Chapter_id,function (data) {
+								//todo 数据渲染
+								UIcallback && UIcallback(data);
+							});
+						});
+					}
+
+					var getFictionInfo = function (callback) {
+						$.get('data/chapter.json',function(data){
+							//获得章节信息之后的回掉
+							Chapter_id = Util.StorageGetter('chapter_id');
+							if(Chapter_id==null){
+								Chapter_id = data.chapters[1].chapter_id;
+							}
+
+							ChapterTotal = data.chapters.length;
+							callback && callback();
+						},'json');
+					}
+					var getCurChapterContent = function (chapter_id,callback) {
+						$.get('data/data' + chapter_id + '.json' ,function (data) {
+							//回掉
+							if(data.result == 0){
+								var url = data.jsonp;
+								Util.getBSONP(url,function (data) {
+									callback && callback(data);
+								});
+							}
+						},'json')
+					}
+					var prevChapter = function(UIcallback){
+						Chapter_id = parseInt(Chapter_id,10);
+						if(Chapter_id == 0){
+							return;
+						}
+						Chapter_id = Chapter_id-1;
+						getCurChapterContent(Chapter_id,UIcallback);
+						Util.StorageSetter('chapter_id',Chapter_id);
+					}
+					var nextChapter = function(UIcallback){
+						Chapter_id = parseInt(Chapter_id,10);
+						if(Chapter_id == ChapterTotal){
+							return;
+						}
+						Chapter_id = Chapter_id+1;
+						getCurChapterContent(Chapter_id,UIcallback);
+						Util.StorageSetter('chapter_id',Chapter_id);
+					}
+					return {
+						init : init,
+						prevChapter : prevChapter,
+						nextChapter : nextChapter
+					}
+				}
+				function ReaderBaseFrame(container){
+					//初始化界面
+					function parseChapterData(jsonData){
+						var jsonObj = JSON.parse(jsonData);
+						var html = '<h4>' + jsonObj.t + '</h4>';
+						for(var i = 1;i<jsonObj.p.length;i++){
+							html += '<p>'+jsonObj.p[i] + '</p>';
+						}
+						return html;
+					}
+					return function(data){
+						container.html(parseChapterData(data));
+					}
+				}
+				function EventHandler(){
+					//交互事件的绑定
+					$('#action_mid').click(function(){
+						if(Dom.top_nav.css('display') == 'none'){
+							Dom.bottom_nav.show();
+							Dom.top_nav.show();
+						}else{
+							Dom.bottom_nav.hide();
+							Dom.top_nav.hide();
+							$('.font-container').hide();
+							$('#font-shift').css('font-size','16px');
+						}
+					});
+					$('#font-shift').click(function () {
+						if($('.font-container').css('display')=='none'){
+							$('.font-container').show();
+							$('#font-shift').css('font-size','22px');
+						}else{
+							$('.font-container').hide();
+							$('#font-shift').css('font-size','16px');
+						}
+					});
+					$('#bk-white').click(function () {
+						$('body').css('background','#fff');//字体和颜色一起设置
+						$('.m-read-content').css('color','black');
+						Util.StorageSetter('initFontcolor','black');
+						Util.StorageSetter('initBk','#fff');
+					});
+					$('#bk-gray').click(function () {
+						$('body').css('background','gray');
+						$('.m-read-content').css('color','black');
+						Util.StorageSetter('initFontcolor','black');
+						Util.StorageSetter('initBk','gray');
+					});
+					$('#bk-fadeyellow').click(function () {
+						$('body').css('background','#e9dfc7');
+						$('.m-read-content').css('color','#555');
+						Util.StorageSetter('initFontcolor','#555');
+						Util.StorageSetter('initBk','#e9dfc7');
+					});
+					$('#bk-blue').click(function () {
+						$('body').css('background','#B3B3B3');
+						$('.m-read-content').css('color','#555');
+						Util.StorageSetter('initFontcolor','#555');
+						Util.StorageSetter('initBk','#B3B3B3');
+					});
+					$('#night-shift').click(function () {
+						$('body').css('background','#404040');
+						$('.m-read-content').css('color','#ABABAB');
+						Util.StorageSetter('initFontcolor','#ABABAB');
+						Util.StorageSetter('initBk','#404040');
+					})
+					$('#large-font').click(function () {
+						if(initFontSize>20){
+							return;
+						}
+						initFontSize += 1;
+						RootContainer.css('font-size',initFontSize);
+						Util.StorageSetter('font_size',initFontSize);
+					});
+					$('#small-font').click(function () {
+						if(initFontSize < 12){
+							return;
+						}
+						initFontSize -= 1;
+						RootContainer.css('font-size',initFontSize);
+						Util.StorageSetter('font_size',initFontSize);
+					});
+
+					Win.scroll(function () {
+						Dom.bottom_nav.hide();
+						Dom.top_nav.hide();
+						$('.font-container').hide();
+						$('#font-shift').css('font-size','16px');
+					});
+					$('#prev_button').click(function () {
+						//todo 获得张杰反野数据 然后数据渲染
+						readerModel.prevChapter(function (data) {
+							readerUI(data);
+						});
+					});
+					$('#next_button').click(function () {
+						readerModel.nextChapter(function(data){
+							readerUI(data);
+						});
+					})
+
+				}
+				main();
+			})();
 		</script>
 	</body>
 </html>
